@@ -3,7 +3,7 @@ require 'open3'
 
 class TheApp < Sinatra::Base
   get '/' do
-    msg = "dirtygirty"
+    msg = "dirtygirty upgraded"
     code = params[:code].to_i || 200
     sleep(params[:sleep].to_i) if params[:sleep]
     msg = params[:echo] if params[:echo]
