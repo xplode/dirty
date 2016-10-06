@@ -3,9 +3,11 @@ require 'open3'
 
 class TheApp < Sinatra::Base
   get '/' do
+    msg = "dirtygirty"
     code = params[:code].to_i || 200
     sleep(params[:sleep].to_i) if params[:sleep]
-    halt code, "#{params}"
+    msg = params[:echo] if params[:echo]
+    halt code, msg 
   end
 
   get '/app_logs' do
@@ -32,4 +34,15 @@ class TheApp < Sinatra::Base
     halt code, msg 
   end
 
+  get '/update' do
+    msg = ""
+    code = 200
+    Open3.popen2e("git pull") {|stdin, stdout_and_stderr, wait_thr|
+      pid = wait_thr.pid # pid of the started process.
+      exit_status = wait_thr.value # Process::Status object returned.
+      msg = "#{stdout_and_stderr.read}: #{exit_status}" 
+      code = 500 if exit_status != 0
+    }
+    halt code, msg 
+  end
 end
