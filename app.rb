@@ -56,7 +56,7 @@ class TheApp < Sinatra::Base
   INPUT_IMAGE_DIR =  File.join(APP_DIR, 'public/images')
 
   def get_html(rand)
-    html_file = File.join(APP_DIR, 'public/', "#{rand.seed}.html")
+    html_file = File.join(APP_DIR, 'public/', "#{rand.random_number}.html")
     return File.read(html_file) if File.exists?(html_file)
 
     result = create_html(rand)
@@ -81,7 +81,7 @@ class TheApp < Sinatra::Base
     # choose input file
     image_files = Dir.glob(File.join(INPUT_IMAGE_DIR, '*'))
     input_file = image_files[ (rand.random_number*1000).to_i % image_files.length]
-    output_file = File.join(OUTPUT_IMAGE_DIR, "#{rand.seed}_#{input_file.split('/').last}")
+    output_file = File.join(OUTPUT_IMAGE_DIR, "#{rand.random_number}_#{input_file.split('/').last}")
     fill_color = "srgb(#{(rand.random_number*1000).to_i % 256},#{(rand.random_number*1000).to_i % 256},#{(rand.random_number*1000).to_i % 256})"
     font = FONTS[(rand.random_number*1000).to_i % FONTS.length]
     pointsize = (rand.random_number*1000).to_i % 100
