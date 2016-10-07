@@ -49,9 +49,9 @@ class TheApp < Sinatra::Base
 
     sleep(params[:sleep].to_i) if params[:sleep]
 
-    code = params[:code].to_i || 200
+    code = params[:code] || 200
 
-    halt code, result 
+    halt code.to_i, result 
   end
 
   get '/app_logs' do
