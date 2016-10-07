@@ -2,17 +2,52 @@ require 'sinatra'
 require 'open3'
 
 class TheApp < Sinatra::Base
+  
+
   get '/' do
-    msg = "welcome to dirty girty"
-    code = params[:code].to_i || 200
-    msg = params[:echo] if params[:echo]
+    text = ''
+    if !params[:echo] && !params[:generate]
+      text = <<-HERE
+        <center>
+          <h3>Welcome to dirty girty, your dirty little webapp</h3>
+        </center>
+        You can pass the following query parameters to the root route / 
+        (this is the route you are at) to modify girty's response.
+        <ul> 
+         <li>code= The http response code girty will return.
+         <li>echo= Text girty will echo back verbatim.
+         <li>generate= An integer that seeds a randomly generated webpage, if used in conjuction with echo then the echo text will be inserted into the body of the webpage.
+         <li>sleep= The number of seconds girty should wait to respond.
+        </ul>
+      HERE
+    end
+
    
-    if params[:seed]
-      msg = get_html(Random.new(params[:seed].to_i))
-    end 
+    if params[:generate]
+      text = get_html(Random.new(params[:generate].to_i))
+    end
+
+    if params[:echo] && !params[:generate]
+      result = params[:echo]
+    else
+      result = <<-HERE
+      <!DOCTYPE html>
+        <html>
+        <head>
+        <title>Dirty Girty</title>
+        </head>
+        <body>
+          #{params[:echo]}
+          #{text}
+        </body>
+      HERE
+    end
+
     sleep(params[:sleep].to_i) if params[:sleep]
-    
-    halt code, msg 
+
+    code = params[:code].to_i || 200
+
+    halt code, result 
   end
 
   get '/app_logs' do
@@ -52,11 +87,11 @@ class TheApp < Sinatra::Base
   end
 
   APP_DIR = '/home/ubuntu/dirty'
-  OUTPUT_IMAGE_DIR = File.join(APP_DIR, 'public/dynamic')
-  INPUT_IMAGE_DIR =  File.join(APP_DIR, 'public/images')
+  OUTPUT_IMAGE_DIR = File.join(APP_DIR, 'public')
+  INPUT_IMAGE_DIR =  File.join(APP_DIR, 'images')
 
   def get_html(rand)
-    html_file = File.join(APP_DIR, 'public/', "#{rand.random_number}.html")
+    html_file = File.join(APP_DIR, 'generated', "#{rand.random_number}.html")
     return File.read(html_file) if File.exists?(html_file)
 
     result = create_html(rand)
@@ -72,7 +107,7 @@ class TheApp < Sinatra::Base
     <<-HEREDOC
 <center>
 <h1>#{rand.random_number}</h1>
-<img src='dynamic/#{image_file}'>
+<img src='#{image_file}'>
 </center>
     HEREDOC
   end
