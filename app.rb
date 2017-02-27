@@ -21,7 +21,13 @@ class TheApp < Sinatra::Base
               The generated page will have as many unique images as the integer given. 
               When used in conjuction with echo the echo text will be pre-pended to 
               the body of the webpage.
+         <li>clear_generated= Delete all generated html files. 
          <li>sleep= The number of seconds girty should wait to respond.
+         <li>restart= Restart the girty app, useful after an update. 
+         <li>update= Get the latest software for girty. 
+         <li>app_logs= Get the girty app log file. 
+         <li>apache_access_logs= Get apache access logs. 
+         <li>apache_error_logs= Get apache error logs. 
         </ul>
       HERE
     end
@@ -52,6 +58,22 @@ class TheApp < Sinatra::Base
     code = params[:code] || 200
 
     halt code.to_i, result 
+  end
+
+  get '/clear_generated' do
+    msg = ""
+    code = 200
+    Open3.popen2e("rm #{APP_DIR}/generated/*.html") {|stdin, stdout_and_stderr, wait_thr|
+      pid = wait_thr.pid # pid of the started process.
+      exit_status = wait_thr.value # Process::Status object returned.
+      msg = "#{stdout_and_stderr.read}: #{exit_status}" 
+      code = 500 if exit_status != 0
+    }
+    halt code, msg 
+  end
+
+  get '/generate/:num' do
+    text = Generate.get_html(Random.new(params[:num].to_i))
   end
 
   get '/app_logs' do

@@ -2,14 +2,14 @@ require 'open3'
 
 module Generate
   APP_DIR = '/home/ubuntu/dirty'
-  OUTPUT_IMAGE_DIR = File.join(APP_DIR, 'public')
+  OUTPUT_IMAGE_DIR = File.join(APP_DIR, 'public', 'images')
   INPUT_IMAGE_DIR =  File.join(APP_DIR, 'images')
 
-  def self.get_html(rand)
+  def self.get_html(rand, path=nil)
     generated_file = File.join(APP_DIR, 'generated', "#{rand.random_number}.html")
     return File.read(generated_file) if File.exists?(generated_file)
 
-    result = create_html(rand)
+    result = create_html(rand, path)
     File.open(generated_file, 'w') do |file|
       file.write(result)
     end
@@ -17,7 +17,7 @@ module Generate
     return result
   end
 
-  def self.create_html(rand)
+  def self.create_html(rand, path=nil)
     images = ''
     numbers = ''
     height = 20 
@@ -41,7 +41,7 @@ module Generate
 
     (0...rand.seed).each do
       image_file = create_image(rand)
-      images += "<img src='#{image_file}' height='#{height}'>"
+      images += "<img src='/images/#{image_file}' height='#{height}'>"
       numbers += "#{rand.random_number}<br>"
     end
     return images + numbers 
