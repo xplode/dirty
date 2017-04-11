@@ -23,11 +23,15 @@ class TheApp < Sinatra::Base
               the body of the webpage.
          <li>clear_generated= Delete all generated html files. 
          <li>sleep= The number of seconds girty should wait to respond.
-         <li>restart= Restart the girty app, useful after an update. 
-         <li>update= Get the latest software for girty. 
-         <li>app_logs= Get the girty app log file. 
-         <li>apache_access_logs= Get apache access logs. 
-         <li>apache_error_logs= Get apache error logs. 
+        </ul>
+        <br>
+        The following control and log paths are available:
+        <ul>
+         <li>restart Restart the girty app, useful after an update. 
+         <li>update Get the latest software for girty. 
+         <li>app_logs Get the girty app log file. 
+         <li>apache_access_logs Get apache access logs. 
+         <li>apache_error_logs Get apache error logs. 
         </ul>
       HERE
     end
